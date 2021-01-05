@@ -2,7 +2,10 @@ package main
 
 import "fmt"
 
-// Implement a LinkedList of 10 nodes in Go
+// This program can be used to create a LinkedList of arbitrary length
+// as well as insert a node anywhere in the list.
+// TODO we still need to check appending to the end of the list.
+
 func main() {
 	list := NewEmptyList(10)
 	fmt.Println("Len: ", list.len)
@@ -11,7 +14,7 @@ func main() {
 	fmt.Println("Len: ", list.len)
 }
 
-// Creates a new empty list
+// NewEmptyList creates a new empty list
 func NewEmptyList(size int) *LinkedList {
 	root := &LinkedList{}
 	var current *Node
@@ -33,6 +36,7 @@ func NewEmptyList(size int) *LinkedList {
 	return root
 }
 
+// InstertAt is used to insert a node in the LinkedList
 // Q: Since this is a pointer do we have to return anything?
 func InsertAt(list *LinkedList, node *Node, pos int) {
 	if pos == 0 {
@@ -58,13 +62,15 @@ func InsertAt(list *LinkedList, node *Node, pos int) {
 	}
 }
 
+// Node represents a Node in the list
 // Linked Lists do not have array like IDs you can look up (but do have names, content, etc)
 // Linked Lists only have next* and not previous*
 type Node struct {
 	next *Node
 }
 
-// Basically just a Node but with a len
+// LinkedList is basically just a Node but with a len and is the
+// structure you pass around in the program.
 type LinkedList struct {
 	next *Node
 	len  int
