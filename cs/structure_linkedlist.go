@@ -7,7 +7,7 @@ func main() {
 	list := NewEmptyList(10)
 	fmt.Println("Len: ", list.len)
 	newNode := &Node{}
-	InsertAt(list, newNode, 7)
+	InsertAt(list, newNode, 0)
 	fmt.Println("Len: ", list.len)
 }
 
@@ -36,13 +36,16 @@ func NewEmptyList(size int) *LinkedList {
 // Q: Since this is a pointer do we have to return anything?
 func InsertAt(list *LinkedList, node *Node, pos int) {
 	if pos == 0 {
-		// TODO We need a new LinkedList
+		newNode := &Node{
+			next: list.next,
+		}
+		list.next = newNode
+		list.len++
 		return
 	}
 	var current *Node
 	for i := 0; i < list.len; i++ {
 		if i == 0 {
-			// TODO we also have the root here
 			current = list.next
 		} else if i == pos {
 			// Insert element and increase length
