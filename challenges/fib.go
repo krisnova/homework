@@ -39,6 +39,8 @@ func fibR(n int) int {
 	return fibR(n-1) + fibR(n-2)
 }
 
+// This is the much more efficient iterative solution
+// O(n) (Fast)
 func fibI(n int) int {
 	if n == 0 {
 		return 0
