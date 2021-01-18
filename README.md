@@ -4,16 +4,11 @@ Nova doing hacks for interviews
 
 ## Must Know
 
- - Linked Lists
- - Binary Trees
+
  - Tries
- - Stacks
- - Queues
  - Vectors / ArrayLists
- - Hash Tables
  - Breadth First Search
  - Depth First Search
- - Binary Search
  - Merge Sort
  - Quick Sort
  - Tree Insert / Find / etc
@@ -25,4 +20,12 @@ Nova doing hacks for interviews
  - O(n)
  - Dynamic Programming
  
- 
+## Data Structures
+
+- Stacks
+- Queues
+- Linked Lists
+- Binary Trees
+- Hash Tables
+- Binary Search
+- Heap

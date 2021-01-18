@@ -1,10 +1,4 @@
-# Challenges I have been asked
-
-#### Write a deep copy for a connected unidirectional graph
-
-Make sure to talk about the O(n)
-
-Depth first in Go
+# Challenges
 
 #### Given a set of sorted streams where you can call next() return the lowest valued item in the list
   
