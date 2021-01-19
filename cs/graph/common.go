@@ -113,6 +113,11 @@ func PrettyPrint(graph *Graph) {
 	fmt.Printf("%s", str)
 }
 
+// SprettyPrint will return the string value of the graph
+func SprettyPrint(graph *Graph) string {
+	return recursiveString(graph.Root, 0, false)
+}
+
 const level string = " "
 
 func recursiveString(v *Vertex, depth int, showPointer bool) string {

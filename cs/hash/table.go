@@ -92,6 +92,8 @@ func (t *Table) Set(key string, value interface{}) {
 		Key:   key,
 		Value: value,
 	}
+	t.Length++
+	t.Buckets[n].Length++
 	t.Buckets[n].Records.Insert(&bst.Node{
 		Key:  key,
 		Data: record,

@@ -10,13 +10,15 @@ import (
 )
 
 func main() {
-	table := hash.NewTable("Nóva", 128)
-	// Add 128*128 single kb records to the table
-	generateKeyValue(table, 128*12, 1024)
+	table := hash.NewTable("Nóva", 24)
+	// Add 512*24 single kb records to the table
+	generateKeyValue(table, 512*24, 1024)
 	fmt.Println("Table length: ", table.Length)
 	for _, bucket := range table.Buckets {
 		fmt.Printf("Bucket (%d) length (%d)\n", bucket.ID, bucket.Length)
 	}
+	table.Set("Fuck", "Yeah")
+	fmt.Println(table.Get("Fuck"))
 }
 
 var keys []string
