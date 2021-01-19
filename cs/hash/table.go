@@ -2,8 +2,11 @@ package hash
 
 import (
 	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"math/big"
+
+	"github.com/kris-nova/job2021/cs/bst"
 )
 
 // hash.Table{}
@@ -31,11 +34,13 @@ type Table struct {
 	BucketCount int
 	Name        string
 	Buckets     []*Bucket
+	Length      int // 0 indexed
 }
 
 type Bucket struct {
 	ID      int
-	Records []*Record
+	Records *bst.BTree
+	Length  int
 }
 
 type Record struct {
@@ -55,8 +60,8 @@ func NewTable(name string, bucketCount int) *Table {
 	// Initialize the Table with BucketCount buckets
 	for i := bucketCount; i > 0; i-- {
 		table.Buckets = append(table.Buckets, &Bucket{
-			ID: i - 1, // Pass in 512->511,1->0
-			// Records: <>
+			ID:      i - 1, // Pass in 512->511,1->0
+			Records: bst.NewBTree(fmt.Sprintf("%d", i-1)),
 		})
 	}
 	return table
@@ -65,17 +70,19 @@ func NewTable(name string, bucketCount int) *Table {
 func (t *Table) Get(key string) *Record {
 	n := t.Hash(key)
 	bucket := t.Buckets[n]
-	// Linear search
-	// TODO add a more effecient search later :)
-	for _, record := range bucket.Records {
-		// TODO Implement a more effecient way of comparing record keys
-		if record.Key == key {
-			return record
-		}
+	node := bucket.Records.Search(key)
+	if node == nil {
+		return nil
 	}
-	return nil
+	return node.Data.(*Record)
 }
 
+// Set is used to add a key/value pair to the hash table
+//
+// Currently uses a (slow) linear search to search for keys
+//    Linear Search
+//      Worst Case O(n) <-- Slow as fuck on large sets
+//      Best  Case O(1)
 //func (t *Table) Set(record *Record)
 func (t *Table) Set(key string, value interface{}) {
 	// Calculate n
@@ -85,28 +92,23 @@ func (t *Table) Set(key string, value interface{}) {
 		Key:   key,
 		Value: value,
 	}
-	for i := len(t.Buckets[n].Records); i > 0; i-- {
-		// TODO Implement a more effecient way of comparing record keys
-		if t.Buckets[n].Records[i-1].String() == key {
-			// Record key exists, so we update
-			t.Buckets[n].Records[i-1] = record
-			return
-		}
-	}
-
-	// Add new record to table
-	t.Buckets[n].Records = append(t.Buckets[n].Records, record)
+	t.Buckets[n].Records.Insert(&bst.Node{
+		Key:  key,
+		Data: record,
+	})
 }
 
 // Hash is used to calculate an int value for a given string where the integer
 // result is a factor of the table's dynamic bucket count
+// TODO currently the Hash() method does not balance and there is a high standard deviation
 func (t *Table) Hash(key string) int {
 	// Calculate MD5 sum and form an int result
-	bytes := md5.Sum([]byte(key))
-	md5 := fmt.Sprintf("%d", bytes)
+	h := md5.New()
+	h.Write([]byte(key))
+	md5 := hex.EncodeToString(h.Sum(nil))
 	// Now that we have a idempotent hash, we can calculate an integer value
 	bigInt := big.NewInt(0)
-	bigInt.SetString(md5, 8) // Probably get away with base 2 or base 16
+	bigInt.SetString(md5, 16) // Probably get away with base 2 or base 16
 	i64 := bigInt.Int64()
 	n := int(i64)
 	// n is the int result of our arithmetic
@@ -128,7 +130,7 @@ func (t *Table) Hash(key string) int {
 	// This allows for upwards maximum of values of n
 	// while retaining a finite amount of buckets that
 	// algorithmically can be calculated.
-	x := n%t.BucketCount + 1
+	x := n % (t.BucketCount)
 	return x // Result should alwayws be a factor of t.BucketCount
 }
 
